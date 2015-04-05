@@ -11,8 +11,23 @@ VAGRANTFILE_API_VERSION = "2"
 # install puppet goodies.
 $puppetRepo = <<SCRIPT
 if ! rpm -q --quiet puppetlabs-release; then
-  rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm
+  rpm -ivh http://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-11.noarch.rpm
 fi
+SCRIPT
+
+# A scriptlet to make sure puppet is up-to-date.
+# Run it after the puppetlabs repo is setup.
+$puppetUpdate = <<SCRIPT
+if rpm -q --quiet puppet; then
+   yum -y update puppet
+else
+   yum -y install puppet
+fi
+SCRIPT
+
+# A scriptlet to install the puppetlabs-apache module
+$puppetlabsModules = <<SCRIPT
+puppet module install puppetlabs-apache
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -54,6 +69,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # puppet expects to find them.
       master.vm.synced_folder "./manifests", "/etc/puppet/manifests"
       master.vm.synced_folder "./modules", "/etc/puppet/modules"
+
+      # Ensure Puppet is up-to-date so we can install some modules
+      # from the Forge
+      master.vm.provision :shell, :inline => $puppetUpdate
+
+      # Install the extra modules we need
+      master.vm.provision :shell, :inline => $puppetlabsModules
     end
 
     # The main/default client. It is CentOS 6-x86_64-based.

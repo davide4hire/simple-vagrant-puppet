@@ -24,5 +24,7 @@ class vim {
   file { '/root/.exrc':
     ensure => file,
     source => 'puppet:///modules/vim/root_exrc',
+    owner  => 'root',
+    group  => 'root'
   }
 }

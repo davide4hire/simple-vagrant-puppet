@@ -39,8 +39,23 @@ class common {
   }
 
   # Ensure all the required packages
-  package {'httpd':
-    ensure => latest
+  package {'perl-libwww-perl':
+    ensure => installed
   }
 
+  # Ensure services that don't need to be running are not
+  service { 'iptables': ensure => stopped }
+  service { 'ip6tables': ensure => stopped }
+
+  # Make sure puppet is up-to-date and enabled and running
+  package {'puppet':
+    ensure => latest
+  }
+  service { 'puppet':
+    enable => true,
+    ensure => running,
+  }
+
+  # Include the modules we want for all hosts
+  include vim
 }

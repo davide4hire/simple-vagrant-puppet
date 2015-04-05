@@ -12,52 +12,19 @@ node default {
 #  stage { 'pre': before => Stage['main'] }
 #  class { 'repos': stage => 'pre' }
 
+}
 
-  # Setup all the entries for /etc/hosts
-  host {'localhost':
-    ip           => '127.0.0.1',
-    host_aliases => [ 'localhost.localdomain', 'localhost4',
-                      'localhost4.localdomain4' ],
-  }
-  host {'localhost6':
-    ip           => '::1',
-    host_aliases => ['localhost6.localdomain6' ],
-  }
-  host { 'master.vagrant':
-    ip           => '192.168.33.10',
-    host_aliases => [ 'master', 'puppet', 'vagrant-puppet-master',
-                      'puppet-master', 'puppetca', 'ca' ],
-  }
-  host { 'client.vagrant':
-    ip           => '192.168.33.20',
-    host_aliases => [ 'client' ],
-  }
-
-  # Ensure all the required packages
-  package {'httpd':
-    ensure => latest
-  }
-
-  # Ensure services that don't need to be running are not
-  service { 'iptables': ensure => stopped }
-  service { 'ip6tables': ensure => stopped }
-
-  # Make sure puppet is up-to-date and enabled and running
-  package {'puppet':
-    ensure => latest
-  }
-  service { 'puppet':
-    enable => true,
-    ensure => running,
-  }
-
-  # Modules for everyone
-  include vim
+node 'client.vagrant' {
+  include common
 }
 
 # This is the node for the puppet-master
 #
 node 'master.vagrant' inherits default {
+
+  # Bring in the common stuff
+  include common
+  
   package {'puppet-server':
     ensure => latest
   }

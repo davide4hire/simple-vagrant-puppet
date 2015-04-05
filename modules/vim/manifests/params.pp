@@ -14,7 +14,7 @@ class vim::params {
 
   case $operatingsystem {
     'centos', 'redhat', 'fedora': {
-       $vim_package = [ 'vim-common', 'vim-enhanced' ]
+       $vim_package = [ 'vim-enhanced' ]
     }
     default: {
        $vim_package = 'vim'
