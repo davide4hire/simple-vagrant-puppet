@@ -10,14 +10,16 @@ VAGRANTFILE_API_VERSION = "2"
 # scriptlet to ensure the puppetlabs repo is installed so we can
 # install puppet goodies.
 $puppetRepo = <<SCRIPT
+echo installing puppetlabs-release
 if ! rpm -q --quiet puppetlabs-release; then
-  rpm -ivh http://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-11.noarch.rpm
+  rpm  --nosignature -ivh http://yum.puppetlabs.com/el/6/products/x86_64/puppetlabs-release-6-11.noarch.rpm
 fi
 SCRIPT
 
 # A scriptlet to make sure puppet is up-to-date.
 # Run it after the puppetlabs repo is setup.
 $puppetUpdate = <<SCRIPT
+echo doing update/install of puppet
 if rpm -q --quiet puppet; then
    yum -y update puppet
 else
@@ -27,7 +29,8 @@ SCRIPT
 
 # A scriptlet to install the puppetlabs-apache module
 $puppetlabsModules = <<SCRIPT
-puppet module install puppetlabs-apache
+echo installing puppetlabs-apache
+puppet module list | grep -q puppetlabs-apache || puppet module install puppetlabs-apache
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -59,7 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define :master do |master|
       master.vm.network :private_network, ip: "192.168.33.10"
       master.vm.hostname = "master.vagrant"
-      master.vm.box = "CentOS-6-64bit"
+      master.vm.box = "centos-6-x86_64"
       master.vm.provider :virtualbox do |vb|
         vb.name = "master"
         #vb.gui = true
@@ -70,23 +73,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       master.vm.synced_folder "./manifests", "/etc/puppet/manifests"
       master.vm.synced_folder "./modules", "/etc/puppet/modules"
 
-      # Ensure Puppet is up-to-date so we can install some modules
-      # from the Forge
-      master.vm.provision :shell, :inline => $puppetUpdate
-
       # Install the extra modules we need
       master.vm.provision :shell, :inline => $puppetlabsModules
+
+      # Install an auto-sign file to make things go faster.
+      master.vm.provision :shell,
+                          :inline => "echo '*.vagrant' >/etc/puppet/autosign.conf"
+      
     end
 
     # The main/default client. It is CentOS 6-x86_64-based.
     config.vm.define :client do |client|
       client.vm.network :private_network, ip: "192.168.33.20"
+      client.vm.network :private_network, ip: "192.168.33.21"
+      client.vm.network :private_network, ip: "192.168.33.22"
+      client.vm.network :private_network, ip: "192.168.33.23"
       client.vm.hostname = "client.vagrant"
-      client.vm.box = "CentOS-6-64bit"
+      client.vm.box = "centos-6-x86_64"
       client.vm.provider :virtualbox do |vb|
         vb.name = "client"
         #vb.gui = true
       end
+
     end
 
 end

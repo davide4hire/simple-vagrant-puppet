@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cat << EOF
+Status: 503
+Content-Type: <%= @contentType -%>; charset=iso-8859-1
+
+<%= @contentStr -%>
+EOF

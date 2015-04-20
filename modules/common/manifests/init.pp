@@ -37,6 +37,18 @@ class common {
     ip           => '192.168.33.20',
     host_aliases => [ 'client' ],
   }
+  host { 'sorry-generic-eu.vagrant':
+    ip           => '192.168.33.21',
+    host_aliases => [ 'sorry-generic' ],
+  }
+  host { 'sorry-blank.vagrant':
+    ip           => '192.168.33.22',
+    host_aliases => [ 'sorry-blank' ],
+  }
+  host { 'redirect.vagrant':
+    ip           => '192.168.33.22',
+    host_aliases => [ 'redirect' ],
+  }
 
   # Ensure all the required packages
   package {'perl-libwww-perl':

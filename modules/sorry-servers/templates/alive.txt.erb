@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cat << EOF
+Status: 200
+Content-Type: text/plain; charset=iso-885901
+
+alive on <%= @fqdn -%> for sorry server <%= @title %>
+EOF

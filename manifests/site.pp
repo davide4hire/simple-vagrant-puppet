@@ -16,11 +16,13 @@ node default {
 
 node 'client.vagrant' {
   include common
+  include base-apache
+  include sorry-servers
 }
 
 # This is the node for the puppet-master
 #
-node 'master.vagrant' inherits default {
+node 'master.vagrant' {
 
   # Bring in the common stuff
   include common
