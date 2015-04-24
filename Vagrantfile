@@ -95,6 +95,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         #vb.gui = true
       end
 
+      # Deploy the facts required to configure the sorry servers
+      client.vm.provision :shell, :path => "set-client-facts.sh"
     end
 
 end

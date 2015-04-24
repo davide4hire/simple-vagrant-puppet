@@ -20,6 +20,10 @@ class base-apache {
     logroot_mode => '0755',
     # Make Apache tell less about itself
     server_tokens => 'ProductOnly',
-    log_formats   => { ha_logs => '%v %h %l %u %t \"%r\" %>s %b' }
+    log_formats   => {
+      ha_logs  => '%v %h %l %u %t \"%r\" %>s %b',
+      redirect => '%{NSCLIENTIP}i %h %{Host}i %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"',
+      sorry    => '%{Host}i %v %u %t \"%r\" %>s %b %T %D',
+    }
   }
 }

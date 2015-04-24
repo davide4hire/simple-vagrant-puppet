@@ -26,3 +26,26 @@ The Vagrantfile configures two ViritulBox machines. One will be a
 puppet master and one will be a basic puppet client. They are setup
 using the most basic puppet defaults.
 
+Sorry Servers
+=============
+
+One setup is for creating and testing basic 'sorry servers'. What is a
+'sorry server'? It is an Apache virtual host that responds with a 503
+status code and a simple page for every request, except for an "alive"
+check page. The idea is to configure a sorry server as a backup
+virtual server in a load balancer.
+
+On the branch `sorry-server` is all the configuration to create some
+simple sorry servers.  It can be tested with commands like this:
+
+    GET -eS -H 'Host: fewo' http://192.168.33.20
+
+The above command should generate output that has the words *Fewo Sorry Page*
+
+	GET -eS -H 'Host: abritel' http://192.168.33.20
+
+The above command should generate output that has the words *French Sorry Page*
+
+    GET -eS -H 'Host: fewo' http://192.168.33.21
+
+The above commmand will produce an empty document.

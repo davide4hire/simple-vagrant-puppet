@@ -58,7 +58,7 @@ define sorry-servers::vhost (
     add_listen         => false,
     default_vhost      => str2bool("$defaultSorry"),
     serveraliases      => $aliases,
-    access_log_format  => 'ha_logs',
+    access_log_format  => 'sorry',
     access_log_file    => 'sorry-servers.log',
     docroot            => "$rootDir/html",
     aliases            => [ { scriptalias => '/alive.txt',
